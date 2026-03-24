@@ -16,6 +16,24 @@ export type AssignmentEntry = {
   status: 'draft' | 'review' | 'scheduled';
 };
 
+export type AttendanceStudent = {
+  id: string;
+  name: string;
+  rollNumber: string;
+  status: 'Present' | 'Absent' | 'Late' | 'Leave';
+};
+
+export type AttendanceDetail = {
+  id: string;
+  classLabel: string;
+  mode: 'Daily' | 'Period';
+  sessionLabel: string;
+  subject: string;
+  teacherNote: string;
+  cutoffLabel: string;
+  students: AttendanceStudent[];
+};
+
 export type AttendanceEntry = {
   id: string;
   classLabel: string;
@@ -148,6 +166,58 @@ export const attendanceInsights = [
     id: 'ai2',
     title: 'Leave approvals waiting',
     detail: '2 parent leave notes are awaiting class teacher review before noon.',
+  },
+];
+
+export const attendanceDetails: AttendanceDetail[] = [
+  {
+    id: 'at1',
+    classLabel: 'Grade 7-B',
+    mode: 'Daily',
+    sessionLabel: 'Tuesday · Morning attendance',
+    subject: 'Homeroom',
+    teacherNote: 'Class teacher should verify leave notes before final save.',
+    cutoffLabel: 'Submit by 10:15 AM',
+    students: [
+      { id: 's1', name: 'Riya Sharma', rollNumber: '07B-01', status: 'Present' },
+      { id: 's2', name: 'Aarav Patel', rollNumber: '07B-02', status: 'Present' },
+      { id: 's3', name: 'Kabir Verma', rollNumber: '07B-03', status: 'Absent' },
+      { id: 's4', name: 'Siya Nair', rollNumber: '07B-04', status: 'Late' },
+      { id: 's5', name: 'Vivaan Gupta', rollNumber: '07B-05', status: 'Present' },
+      { id: 's6', name: 'Meera Joshi', rollNumber: '07B-06', status: 'Leave' },
+    ],
+  },
+  {
+    id: 'at2',
+    classLabel: 'Grade 8-A',
+    mode: 'Period',
+    sessionLabel: 'Tuesday · Period 2',
+    subject: 'Mathematics',
+    teacherNote: 'Period attendance should be locked once the bell changes.',
+    cutoffLabel: 'Submit by 09:30 AM',
+    students: [
+      { id: 's7', name: 'Aditi Rao', rollNumber: '08A-03', status: 'Present' },
+      { id: 's8', name: 'Dev Malhotra', rollNumber: '08A-07', status: 'Present' },
+      { id: 's9', name: 'Naman Singh', rollNumber: '08A-12', status: 'Absent' },
+      { id: 's10', name: 'Prisha Iyer', rollNumber: '08A-15', status: 'Present' },
+      { id: 's11', name: 'Rohan Das', rollNumber: '08A-22', status: 'Late' },
+    ],
+  },
+  {
+    id: 'at3',
+    classLabel: 'Grade 6-C',
+    mode: 'Period',
+    sessionLabel: 'Tuesday · Period 5',
+    subject: 'Science',
+    teacherNote: 'Substitution class saved by acting teacher.',
+    cutoffLabel: 'Saved at 11:14 AM',
+    students: [
+      { id: 's12', name: 'Ishaan Roy', rollNumber: '06C-02', status: 'Present' },
+      { id: 's13', name: 'Tara Menon', rollNumber: '06C-08', status: 'Present' },
+      { id: 's14', name: 'Yash Khanna', rollNumber: '06C-16', status: 'Present' },
+      { id: 's15', name: 'Anaisha Bedi', rollNumber: '06C-21', status: 'Absent' },
+      { id: 's16', name: 'Reyansh Jain', rollNumber: '06C-24', status: 'Present' },
+    ],
   },
 ];
 

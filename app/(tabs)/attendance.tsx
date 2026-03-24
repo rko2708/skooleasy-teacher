@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 import { TeacherCard } from '@/components/teacher/card';
 import { TeacherScreen } from '@/components/teacher/screen';
@@ -10,6 +11,7 @@ import { teacherService } from '@/services/teacher-service';
 import type { AttendanceEntry, InsightItem } from '@/types/teacher';
 
 export default function AttendanceScreen() {
+  const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const palette = Colors[colorScheme];
   const [attendance, setAttendance] = useState<AttendanceEntry[]>([]);
@@ -19,18 +21,34 @@ export default function AttendanceScreen() {
   useEffect(() => {
     let active = true;
 
+    async function loadInsights() {
+      const insightItems = await teacherService.getAttendanceInsights();
+
+      if (!active) {
+        return;
+      }
+
+      setInsights(insightItems);
+    }
+
+    loadInsights();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useFocusEffect(() => {
+    let active = true;
+
     async function loadAttendance() {
-      const [attendanceItems, insightItems] = await Promise.all([
-        teacherService.getAttendance(),
-        teacherService.getAttendanceInsights(),
-      ]);
+      const attendanceItems = await teacherService.getAttendance();
 
       if (!active) {
         return;
       }
 
       setAttendance(attendanceItems);
-      setInsights(insightItems);
       setLoading(false);
     }
 
@@ -39,7 +57,7 @@ export default function AttendanceScreen() {
     return () => {
       active = false;
     };
-  }, []);
+  });
 
   return (
     <TeacherScreen
@@ -64,33 +82,40 @@ export default function AttendanceScreen() {
       ) : (
         <>
           {attendance.map((entry) => (
-            <TeacherCard key={entry.id}>
-              <View style={styles.topRow}>
-                <View style={styles.copy}>
-                  <ThemedText type="subtitle">{entry.classLabel}</ThemedText>
-                  <ThemedText style={[styles.description, { color: palette.muted }]}>
-                    {entry.mode} attendance
-                  </ThemedText>
+            <Pressable key={entry.id} onPress={() => router.push(`/attendance/${entry.id}`)}>
+              <TeacherCard>
+                <View style={styles.topRow}>
+                  <View style={styles.copy}>
+                    <ThemedText type="subtitle">{entry.classLabel}</ThemedText>
+                    <ThemedText style={[styles.description, { color: palette.muted }]}>
+                      {entry.mode} attendance
+                    </ThemedText>
+                  </View>
+                  <View
+                    style={[
+                      styles.statusBadge,
+                      {
+                        backgroundColor:
+                          entry.status === 'pending' ? palette.warningSoft : palette.successSoft,
+                      },
+                    ]}>
+                    <ThemedText style={[styles.statusText, { color: palette.accentStrong }]}>
+                      {entry.status}
+                    </ThemedText>
+                  </View>
                 </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    {
-                      backgroundColor:
-                        entry.status === 'pending' ? palette.warningSoft : palette.successSoft,
-                    },
-                  ]}>
-                  <ThemedText style={[styles.statusText, { color: palette.accentStrong }]}>
-                    {entry.status}
-                  </ThemedText>
-                </View>
-              </View>
 
-              <ThemedText style={styles.summary}>{entry.summary}</ThemedText>
-              <ThemedText style={[styles.description, { color: palette.muted }]}>
-                {entry.cutoffLabel}
-              </ThemedText>
-            </TeacherCard>
+                <ThemedText style={styles.summary}>{entry.summary}</ThemedText>
+                <View style={styles.bottomRow}>
+                  <ThemedText style={[styles.description, { color: palette.muted }]}>
+                    {entry.cutoffLabel}
+                  </ThemedText>
+                  <ThemedText style={[styles.openHint, { color: palette.accentStrong }]}>
+                    Open roster
+                  </ThemedText>
+                </View>
+              </TeacherCard>
+            </Pressable>
           ))}
 
           <TeacherCard>
@@ -157,6 +182,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     alignItems: 'flex-start',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+    alignItems: 'center',
+  },
+  openHint: {
+    fontSize: 13,
+    fontWeight: '700',
   },
   dot: {
     width: 8,

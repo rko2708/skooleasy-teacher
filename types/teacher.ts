@@ -46,6 +46,26 @@ export type AttendanceEntry = {
   cutoffLabel: string;
 };
 
+export type StudentAttendanceStatus = 'Present' | 'Absent' | 'Late' | 'Leave';
+
+export type AttendanceStudent = {
+  id: string;
+  name: string;
+  rollNumber: string;
+  status: StudentAttendanceStatus;
+};
+
+export type AttendanceDetail = {
+  id: string;
+  classLabel: string;
+  mode: AttendanceMode;
+  sessionLabel: string;
+  subject: string;
+  teacherNote: string;
+  cutoffLabel: string;
+  students: AttendanceStudent[];
+};
+
 export type ClassOverview = {
   id: string;
   classLabel: string;
