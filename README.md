@@ -1,50 +1,35 @@
-# Welcome to your Expo app 👋
+# SkoolEasy Teacher App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Teacher-facing mobile app built with Expo Router. This repo is intentionally scoped to teacher workflows only and assumes backend APIs are available from a separate Go service.
 
-## Get started
+## Current foundation
 
-1. Install dependencies
+The app now starts with a teacher-oriented shell instead of the Expo starter screens:
 
-   ```bash
-   npm install
-   ```
+- `Dashboard`: daily snapshot, next classes, assignments queue, support follow-ups
+- `Schedule`: weekly timetable framing with substitution and attendance hooks
+- `Classes`: class teacher and subject teacher workspace
+- `Profile`: role scope and API domain summary
 
-2. Start the app
+All data is currently mocked in [`data/teacher-app.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/data/teacher-app.ts) so we can shape the frontend before wiring real endpoints.
 
-   ```bash
-   npx expo start
-   ```
+## Product direction
 
-In the output, you'll find options to open the app in a
+The intended scope for this app includes:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- teacher timetable and substitutions
+- attendance for subject teachers and class teachers
+- assignments and submission review
+- student and parent-facing follow-up context
+- marks, notices, and leave workflows
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+The planning document lives at [`docs/teacher-app-plan.md`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/docs/teacher-app-plan.md).
 
-## Get a fresh project
-
-When you're ready, run:
+## Run locally
 
 ```bash
-npm run reset-project
+npm install
+npm run start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Then open the app on iOS, Android, or web from the Expo prompt.

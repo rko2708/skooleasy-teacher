@@ -1,98 +1,244 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { TeacherCard } from '@/components/teacher/card';
+import { TeacherScreen } from '@/components/teacher/screen';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Colors, Fonts } from '@/constants/theme';
+import {
+  assignments,
+  dashboardStats,
+  notices,
+  studentSupportItems,
+  teacherProfile,
+  todaysSchedule,
+} from '@/data/teacher-app';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function HomeScreen() {
+export default function DashboardScreen() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const palette = Colors[colorScheme];
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
+    <TeacherScreen
+      header={
+        <View style={styles.headerStack}>
+          <ThemedText style={[styles.eyebrow, { color: palette.muted }]}>
+            {teacherProfile.school}
+          </ThemedText>
+          <ThemedText type="title" style={[styles.title, { fontFamily: Fonts.serif }]}>
+            Teacher Command Center
+          </ThemedText>
+          <ThemedText style={[styles.subtitle, { color: palette.muted }]}>
+            {teacherProfile.name} · {teacherProfile.role} · {teacherProfile.homeroom}
+          </ThemedText>
+        </View>
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+      <TeacherCard style={[styles.heroCard, { backgroundColor: palette.heroBackground, borderColor: palette.heroBorder }]}>
+        <View style={styles.heroRow}>
+          <View style={styles.heroCopy}>
+            <ThemedText style={[styles.heroLabel, { color: palette.heroAccent }]}>Today at a glance</ThemedText>
+            <ThemedText style={styles.heroTitle}>Keep classes on time, attendance complete, and families informed.</ThemedText>
+          </View>
+          <View style={[styles.heroBadge, { backgroundColor: palette.badgeBackground }]}>
+            <ThemedText style={[styles.heroBadgeText, { color: palette.heroAccent }]}>08:30 AM</ThemedText>
+            <ThemedText style={[styles.heroBadgeSubtext, { color: palette.muted }]}>First bell</ThemedText>
+          </View>
+        </View>
+      </TeacherCard>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      <View style={styles.statsGrid}>
+        {dashboardStats.map((stat) => (
+          <TeacherCard key={stat.label} style={styles.statCard}>
+            <ThemedText style={[styles.statValue, { color: palette.accentStrong }]}>{stat.value}</ThemedText>
+            <ThemedText type="defaultSemiBold">{stat.label}</ThemedText>
+            <ThemedText style={[styles.helperText, { color: palette.muted }]}>{stat.helper}</ThemedText>
+          </TeacherCard>
+        ))}
+      </View>
+
+      <TeacherCard
+        footer={<ThemedText style={[styles.footerHint, { color: palette.accentStrong }]}>Attendance, substitution, and room details should all come from timetable APIs.</ThemedText>}>
+        <ThemedText type="subtitle">Next classes</ThemedText>
+        {todaysSchedule.slice(0, 3).map((item) => (
+          <View key={item.id} style={styles.listRow}>
+            <View style={styles.listCopy}>
+              <ThemedText type="defaultSemiBold">
+                {item.subject} · {item.classLabel}
+              </ThemedText>
+              <ThemedText style={[styles.helperText, { color: palette.muted }]}>
+                {item.time} · {item.room}
+              </ThemedText>
+            </View>
+            <View
+              style={[
+                styles.pill,
+                {
+                  backgroundColor:
+                    item.status === 'up-next'
+                      ? palette.badgeBackground
+                      : item.status === 'substitute'
+                        ? palette.warningSoft
+                        : palette.successSoft,
+                },
+              ]}>
+              <ThemedText style={[styles.pillText, { color: palette.accentStrong }]}>
+                {item.status === 'up-next'
+                  ? 'Up next'
+                  : item.status === 'substitute'
+                    ? 'Substitution'
+                    : 'Done'}
+              </ThemedText>
+            </View>
+          </View>
+        ))}
+      </TeacherCard>
+
+      <TeacherCard>
+        <ThemedText type="subtitle">Assignments queue</ThemedText>
+        {assignments.map((item) => (
+          <View key={item.id} style={styles.listRow}>
+            <View style={styles.listCopy}>
+              <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
+              <ThemedText style={[styles.helperText, { color: palette.muted }]}>
+                {item.classLabel} · {item.dueLabel}
+              </ThemedText>
+              <ThemedText style={[styles.helperText, { color: palette.muted }]}>{item.submissions}</ThemedText>
+            </View>
+            <ThemedText style={[styles.assignmentStatus, { color: palette.accentStrong }]}>
+              {item.status}
+            </ThemedText>
+          </View>
+        ))}
+      </TeacherCard>
+
+      <View style={styles.dualColumn}>
+        <TeacherCard style={styles.columnCard}>
+          <ThemedText type="subtitle">Student support</ThemedText>
+          {studentSupportItems.map((item) => (
+            <View key={item.id} style={styles.compactBlock}>
+              <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
+              <ThemedText style={[styles.helperText, { color: palette.muted }]}>{item.detail}</ThemedText>
+            </View>
+          ))}
+        </TeacherCard>
+
+        <TeacherCard style={styles.columnCard}>
+          <ThemedText type="subtitle">School notices</ThemedText>
+          {notices.map((item) => (
+            <View key={item.id} style={styles.compactBlock}>
+              <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
+              <ThemedText style={[styles.helperText, { color: palette.muted }]}>{item.detail}</ThemedText>
+            </View>
+          ))}
+        </TeacherCard>
+      </View>
+    </TeacherScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  headerStack: {
+    gap: 6,
+  },
+  eyebrow: {
+    fontSize: 13,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  title: {
+    fontSize: 34,
+    lineHeight: 38,
+  },
+  subtitle: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  heroCard: {
+    paddingVertical: 20,
+  },
+  heroRow: {
     flexDirection: 'row',
+    gap: 16,
     alignItems: 'center',
+  },
+  heroCopy: {
+    flex: 1,
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  heroLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  heroTitle: {
+    fontSize: 22,
+    lineHeight: 30,
+    fontWeight: '700',
+  },
+  heroBadge: {
+    minWidth: 96,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 4,
+  },
+  heroBadgeText: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  heroBadgeSubtext: {
+    fontSize: 13,
+  },
+  statsGrid: {
+    gap: 12,
+  },
+  statCard: {
+    gap: 6,
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: '800',
+  },
+  helperText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  footerHint: {
+    fontSize: 13,
+    lineHeight: 19,
+    fontWeight: '600',
+  },
+  listRow: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'flex-start',
+  },
+  listCopy: {
+    flex: 1,
+    gap: 3,
+  },
+  pill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  pillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  assignmentStatus: {
+    fontSize: 13,
+    fontWeight: '700',
+    textTransform: 'capitalize',
+  },
+  dualColumn: {
+    gap: 12,
+  },
+  columnCard: {
+    flex: 1,
+  },
+  compactBlock: {
+    gap: 5,
   },
 });
