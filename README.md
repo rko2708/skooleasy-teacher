@@ -39,6 +39,8 @@ In remote API mode, requests automatically attach:
 - `X-Teacher-Role`
 - `X-School-Id`
 
+Sessions are now persisted with [`expo-secure-store`](https://docs.expo.dev/versions/latest/sdk/securestore/) on device and `localStorage` on web through [`lib/auth/session-persistence.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/lib/auth/session-persistence.ts). If a backend request returns `401` and a refresh token exists, the API client attempts `/auth/refresh` once before failing.
+
 ## Product direction
 
 The intended scope for this app includes:

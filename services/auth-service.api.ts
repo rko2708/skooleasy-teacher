@@ -9,6 +9,12 @@ export const apiAuthService: AuthService = {
     });
   },
 
+  refresh(input) {
+    return apiClient.post<AuthSession>('/auth/refresh', input, {
+      'X-Auth-Mode': 'refresh-token',
+    });
+  },
+
   logout() {
     return apiClient.post<void>('/auth/logout');
   },

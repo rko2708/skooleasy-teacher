@@ -1,5 +1,5 @@
 import { apiConfig } from '@/lib/api/config';
-import { getAuthSession } from '@/lib/auth/session-store';
+import { getAuthSession, refreshAuthSession } from '@/lib/auth/session-store';
 
 type RequestOptions = {
   body?: unknown;
@@ -37,6 +37,34 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
+
+  if (response.status === 401 && session?.refreshToken) {
+    const refreshedSession = await refreshAuthSession();
+
+    if (refreshedSession?.accessToken) {
+      const retryResponse = await fetch(`${apiConfig.baseUrl}${path}`, {
+        method: options.method ?? 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${refreshedSession.accessToken}`,
+          ...(refreshedSession.teacherId ? { 'X-Teacher-Id': refreshedSession.teacherId } : {}),
+          ...(refreshedSession.role ? { 'X-Teacher-Role': refreshedSession.role } : {}),
+          ...(refreshedSession.schoolId || apiConfig.schoolId
+            ? { 'X-School-Id': refreshedSession.schoolId ?? apiConfig.schoolId }
+            : {}),
+          ...(options.headers ?? {}),
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined,
+      });
+
+      if (!retryResponse.ok) {
+        const retryMessage = await retryResponse.text();
+        throw new ApiError(retryMessage || 'API request failed', retryResponse.status);
+      }
+
+      return (await retryResponse.json()) as T;
+    }
+  }
 
   if (!response.ok) {
     const message = await response.text();

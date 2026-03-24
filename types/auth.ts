@@ -11,3 +11,7 @@ export type LoginInput = {
   email: string;
   password: string;
 };
+
+export type RefreshSessionInput = {
+  refreshToken: string;
+};

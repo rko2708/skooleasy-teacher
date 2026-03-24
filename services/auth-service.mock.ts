@@ -26,6 +26,19 @@ export const mockAuthService: AuthService = {
     };
   },
 
+  async refresh({ refreshToken }) {
+    await wait(120);
+
+    return {
+      accessToken: `mock-access-token-${Date.now()}`,
+      refreshToken,
+      teacherId: 'teacher-101',
+      schoolId: 'school-skool-easy',
+      teacherName: 'Ananya Mehta',
+      role: 'Class Teacher',
+    };
+  },
+
   async logout() {
     await wait(80);
   },
