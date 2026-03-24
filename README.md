@@ -14,6 +14,19 @@ The app now starts with a teacher-oriented shell instead of the Expo starter scr
 
 Data is currently mocked in [`data/teacher-app.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/data/teacher-app.ts), and the async service shape lives in [`services/teacher-service.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.ts) so we can swap in real APIs cleanly.
 
+## API mode
+
+By default, the app uses mock data so the frontend works without a backend.
+
+To point the app at a real API, set:
+
+```bash
+EXPO_PUBLIC_USE_MOCK_API=false
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8080
+```
+
+The selector lives in [`services/teacher-service.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.ts), mock behavior lives in [`services/teacher-service.mock.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.mock.ts), and the HTTP-backed implementation lives in [`services/teacher-service.api.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.api.ts).
+
 ## Product direction
 
 The intended scope for this app includes:
