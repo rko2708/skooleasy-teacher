@@ -1,0 +1,15 @@
+import { apiClient } from '@/lib/api/client';
+import type { AuthService } from '@/services/auth-service.types';
+import type { AuthSession, LoginInput } from '@/types/auth';
+
+export const apiAuthService: AuthService = {
+  login(input: LoginInput) {
+    return apiClient.post<AuthSession>('/auth/login', input, {
+      'X-Auth-Mode': 'password',
+    });
+  },
+
+  logout() {
+    return apiClient.post<void>('/auth/logout');
+  },
+};

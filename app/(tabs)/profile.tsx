@@ -1,4 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
 
 import { TeacherCard } from '@/components/teacher/card';
 import { TeacherScreen } from '@/components/teacher/screen';
@@ -6,10 +7,17 @@ import { ThemedText } from '@/components/themed-text';
 import { Colors, Fonts } from '@/constants/theme';
 import { apiDomains, teacherProfile } from '@/data/teacher-app';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuth } from '@/providers/auth-provider';
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const palette = Colors[colorScheme];
+  const { session, signOut } = useAuth();
+
+  async function handleSignOut() {
+    await signOut();
+    router.replace('/sign-in');
+  }
 
   return (
     <TeacherScreen
@@ -30,6 +38,10 @@ export default function ProfileScreen() {
           {teacherProfile.department} · {teacherProfile.role}
         </ThemedText>
         <View style={styles.detailRow}>
+          <ThemedText type="defaultSemiBold">Signed in as</ThemedText>
+          <ThemedText>{session?.teacherName ?? teacherProfile.name}</ThemedText>
+        </View>
+        <View style={styles.detailRow}>
           <ThemedText type="defaultSemiBold">Assigned homeroom</ThemedText>
           <ThemedText>{teacherProfile.homeroom}</ThemedText>
         </View>
@@ -41,6 +53,13 @@ export default function ProfileScreen() {
           <ThemedText type="defaultSemiBold">Cross-app dependencies</ThemedText>
           <ThemedText>Student, parent, and admin apps consume the same backend data.</ThemedText>
         </View>
+        <Pressable
+          onPress={handleSignOut}
+          style={[styles.signOutButton, { backgroundColor: palette.accentStrong }]}>
+          <ThemedText style={[styles.signOutText, { color: palette.background }]}>
+            Sign out
+          </ThemedText>
+        </Pressable>
       </TeacherCard>
 
       <TeacherCard>
@@ -84,6 +103,17 @@ const styles = StyleSheet.create({
   apiText: {
     fontSize: 15,
     lineHeight: 21,
+  },
+  signOutButton: {
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    marginTop: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 11,
+  },
+  signOutText: {
+    fontSize: 14,
+    fontWeight: '700',
   },
   dot: {
     width: 8,

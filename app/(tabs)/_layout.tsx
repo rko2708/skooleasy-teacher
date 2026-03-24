@@ -1,13 +1,23 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuth } from '@/providers/auth-provider';
 
 export default function TabLayout() {
+  const { initialized, session } = useAuth();
   const colorScheme = useColorScheme();
+
+  if (!initialized) {
+    return null;
+  }
+
+  if (initialized && !session) {
+    return <Redirect href="/sign-in" />;
+  }
 
   return (
     <Tabs
@@ -68,7 +78,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          href: null,
+          title: 'Profile',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              size={22}
+              name={focused ? 'person-circle' : 'person-circle-outline'}
+              color={color}
+            />
+          ),
         }}
       />
     </Tabs>

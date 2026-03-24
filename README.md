@@ -23,9 +23,21 @@ To point the app at a real API, set:
 ```bash
 EXPO_PUBLIC_USE_MOCK_API=false
 EXPO_PUBLIC_API_BASE_URL=http://localhost:8080
+EXPO_PUBLIC_SCHOOL_ID=school-skool-easy
 ```
 
 The selector lives in [`services/teacher-service.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.ts), mock behavior lives in [`services/teacher-service.mock.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.mock.ts), and the HTTP-backed implementation lives in [`services/teacher-service.api.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.api.ts).
+
+## Authentication
+
+The app now includes a teacher sign-in screen at [`app/sign-in.tsx`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/app/sign-in.tsx), an auth provider at [`providers/auth-provider.tsx`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/providers/auth-provider.tsx), and automatic API headers through [`lib/api/client.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/lib/api/client.ts).
+
+In remote API mode, requests automatically attach:
+
+- `Authorization: Bearer <token>`
+- `X-Teacher-Id`
+- `X-Teacher-Role`
+- `X-School-Id`
 
 ## Product direction
 

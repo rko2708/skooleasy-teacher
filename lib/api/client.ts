@@ -1,4 +1,5 @@
 import { apiConfig } from '@/lib/api/config';
+import { getAuthSession } from '@/lib/auth/session-store';
 
 type RequestOptions = {
   body?: unknown;
@@ -20,10 +21,18 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     throw new Error('Missing EXPO_PUBLIC_API_BASE_URL for remote API mode.');
   }
 
+  const session = getAuthSession();
+
   const response = await fetch(`${apiConfig.baseUrl}${path}`, {
     method: options.method ?? 'GET',
     headers: {
       'Content-Type': 'application/json',
+      ...(session?.accessToken ? { Authorization: `Bearer ${session.accessToken}` } : {}),
+      ...(session?.teacherId ? { 'X-Teacher-Id': session.teacherId } : {}),
+      ...(session?.role ? { 'X-Teacher-Role': session.role } : {}),
+      ...(session?.schoolId || apiConfig.schoolId
+        ? { 'X-School-Id': session?.schoolId ?? apiConfig.schoolId }
+        : {}),
       ...(options.headers ?? {}),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
