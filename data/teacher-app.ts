@@ -16,6 +16,28 @@ export type AssignmentEntry = {
   status: 'draft' | 'review' | 'scheduled';
 };
 
+export type AssignmentSubmission = {
+  id: string;
+  studentName: string;
+  submittedAt: string;
+  reviewStatus: 'Pending Review' | 'Reviewed' | 'Needs Resubmission';
+  attachmentLabel: string;
+  scoreLabel: string;
+};
+
+export type AssignmentDetail = {
+  id: string;
+  title: string;
+  classLabel: string;
+  subject: string;
+  dueLabel: string;
+  instructions: string;
+  attachmentLabel: string;
+  status: 'draft' | 'review' | 'scheduled';
+  submissionsSummary: string;
+  submissions: AssignmentSubmission[];
+};
+
 export type AttendanceStudent = {
   id: string;
   name: string;
@@ -126,6 +148,70 @@ export const assignments: AssignmentEntry[] = [
     dueLabel: 'Publishes Friday',
     submissions: 'Attachment added',
     status: 'scheduled',
+  },
+];
+
+export const assignmentDetails: AssignmentDetail[] = [
+  {
+    id: 'a1',
+    title: 'Fractions practice sheet',
+    classLabel: 'Grade 7-B',
+    subject: 'Mathematics',
+    dueLabel: 'Due today, 4:00 PM',
+    instructions: 'Complete questions 1 to 12 and upload either a PDF or clear notebook images.',
+    attachmentLabel: 'Worksheet-fractions-set-3.pdf',
+    status: 'review',
+    submissionsSummary: '23 of 31 submitted',
+    submissions: [
+      {
+        id: 'sub1',
+        studentName: 'Riya Sharma',
+        submittedAt: 'Submitted at 1:12 PM',
+        reviewStatus: 'Reviewed',
+        attachmentLabel: 'riya-fractions.pdf',
+        scoreLabel: '8 / 10',
+      },
+      {
+        id: 'sub2',
+        studentName: 'Aarav Patel',
+        submittedAt: 'Submitted at 2:05 PM',
+        reviewStatus: 'Pending Review',
+        attachmentLabel: 'aarav-notebook.jpg',
+        scoreLabel: 'Not graded',
+      },
+      {
+        id: 'sub3',
+        studentName: 'Kabir Verma',
+        submittedAt: 'Submitted at 3:41 PM',
+        reviewStatus: 'Needs Resubmission',
+        attachmentLabel: 'kabir-fractions.pdf',
+        scoreLabel: 'Redo Q7 and Q9',
+      },
+    ],
+  },
+  {
+    id: 'a2',
+    title: 'Linear equations quiz prep',
+    classLabel: 'Grade 8-A',
+    subject: 'Mathematics',
+    dueLabel: 'Schedule for tomorrow',
+    instructions: 'Prepare a short worksheet with mixed-difficulty problems before publishing.',
+    attachmentLabel: 'No attachment yet',
+    status: 'draft',
+    submissionsSummary: 'Draft ready',
+    submissions: [],
+  },
+  {
+    id: 'a3',
+    title: 'Weekend enrichment task',
+    classLabel: 'Grade 7-B',
+    subject: 'Mathematics',
+    dueLabel: 'Publishes Friday',
+    instructions: 'Students solve one real-world word problem and explain the approach in 150 words.',
+    attachmentLabel: 'weekend-enrichment-brief.pdf',
+    status: 'scheduled',
+    submissionsSummary: 'Attachment added',
+    submissions: [],
   },
 ];
 

@@ -24,6 +24,7 @@ export type ScheduleEntry = {
 };
 
 export type AssignmentStatus = 'draft' | 'review' | 'scheduled';
+export type SubmissionReviewStatus = 'Pending Review' | 'Reviewed' | 'Needs Resubmission';
 
 export type AssignmentEntry = {
   id: string;
@@ -32,6 +33,37 @@ export type AssignmentEntry = {
   dueLabel: string;
   submissions: string;
   status: AssignmentStatus;
+};
+
+export type AssignmentSubmission = {
+  id: string;
+  studentName: string;
+  submittedAt: string;
+  reviewStatus: SubmissionReviewStatus;
+  attachmentLabel: string;
+  scoreLabel: string;
+};
+
+export type AssignmentDetail = {
+  id: string;
+  title: string;
+  classLabel: string;
+  subject: string;
+  dueLabel: string;
+  instructions: string;
+  attachmentLabel: string;
+  status: AssignmentStatus;
+  submissionsSummary: string;
+  submissions: AssignmentSubmission[];
+};
+
+export type AssignmentFormInput = {
+  title: string;
+  classLabel: string;
+  subject: string;
+  dueLabel: string;
+  instructions: string;
+  attachmentLabel: string;
 };
 
 export type AttendanceMode = 'Daily' | 'Period';

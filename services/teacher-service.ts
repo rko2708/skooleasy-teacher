@@ -1,5 +1,6 @@
 import {
   assignments,
+  assignmentDetails,
   attendanceEntries,
   attendanceDetails,
   attendanceInsights,
@@ -11,7 +12,10 @@ import {
   todaysSchedule,
 } from '@/data/teacher-app';
 import type {
+  AssignmentDetail,
   AssignmentEntry,
+  AssignmentFormInput,
+  AssignmentSubmission,
   AttendanceDetail,
   AttendanceEntry,
   AttendanceStudent,
@@ -32,6 +36,11 @@ let attendanceDetailStore = attendanceDetails.map((detail) => ({
   ...detail,
   students: detail.students.map((student) => ({ ...student })),
 }));
+let assignmentListStore = assignments.map((entry) => ({ ...entry }));
+let assignmentDetailStore = assignmentDetails.map((detail) => ({
+  ...detail,
+  submissions: detail.submissions.map((submission) => ({ ...submission })),
+}));
 
 function buildAttendanceSummary(students: AttendanceStudent[]) {
   const presentCount = students.filter((student) => student.status === 'Present').length;
@@ -45,6 +54,27 @@ function buildAttendanceSummary(students: AttendanceStudent[]) {
   }
 
   return `${presentCount} present, ${absentCount} absent, ${lateCount} late, ${leaveCount} on leave.`;
+}
+
+function buildAssignmentStatus(submissions: AssignmentSubmission[]): AssignmentEntry['status'] {
+  if (submissions.length === 0) {
+    return 'draft';
+  }
+
+  const hasPending = submissions.some((submission) => submission.reviewStatus === 'Pending Review');
+  return hasPending ? 'review' : 'scheduled';
+}
+
+function buildSubmissionSummary(submissions: AssignmentSubmission[]) {
+  if (submissions.length === 0) {
+    return 'Draft ready';
+  }
+
+  const reviewedCount = submissions.filter(
+    (submission) => submission.reviewStatus === 'Reviewed',
+  ).length;
+
+  return `${reviewedCount} of ${submissions.length} reviewed`;
 }
 
 export const teacherService = {
@@ -65,7 +95,98 @@ export const teacherService = {
 
   async getAssignments(): Promise<AssignmentEntry[]> {
     await wait();
-    return assignments;
+    return assignmentListStore.map((entry) => ({ ...entry }));
+  },
+
+  async getAssignmentDetail(id: string): Promise<AssignmentDetail | null> {
+    await wait();
+    const detail = assignmentDetailStore.find((entry) => entry.id === id);
+
+    return detail
+      ? {
+          ...detail,
+          submissions: detail.submissions.map((submission) => ({ ...submission })),
+        }
+      : null;
+  },
+
+  async createAssignment(input: AssignmentFormInput): Promise<AssignmentDetail> {
+    await wait(220);
+
+    const id = `a${assignmentDetailStore.length + 1}`;
+    const detail: AssignmentDetail = {
+      id,
+      title: input.title,
+      classLabel: input.classLabel,
+      subject: input.subject,
+      dueLabel: input.dueLabel,
+      instructions: input.instructions,
+      attachmentLabel: input.attachmentLabel || 'No attachment yet',
+      status: 'draft',
+      submissionsSummary: 'Draft ready',
+      submissions: [],
+    };
+
+    assignmentDetailStore = [detail, ...assignmentDetailStore];
+    assignmentListStore = [
+      {
+        id,
+        title: detail.title,
+        classLabel: detail.classLabel,
+        dueLabel: detail.dueLabel,
+        submissions: detail.submissionsSummary,
+        status: detail.status,
+      },
+      ...assignmentListStore,
+    ];
+
+    return detail;
+  },
+
+  async updateSubmissionReview(
+    assignmentId: string,
+    submissionId: string,
+    reviewStatus: AssignmentSubmission['reviewStatus'],
+  ): Promise<AssignmentDetail> {
+    await wait(180);
+
+    assignmentDetailStore = assignmentDetailStore.map((detail) => {
+      if (detail.id !== assignmentId) {
+        return detail;
+      }
+
+      const submissions = detail.submissions.map((submission) =>
+        submission.id === submissionId ? { ...submission, reviewStatus } : submission,
+      );
+
+      return {
+        ...detail,
+        submissions,
+        submissionsSummary: buildSubmissionSummary(submissions),
+        status: buildAssignmentStatus(submissions),
+      };
+    });
+
+    const updated = assignmentDetailStore.find((detail) => detail.id === assignmentId);
+
+    if (!updated) {
+      throw new Error(`Assignment detail not found for ${assignmentId}`);
+    }
+
+    assignmentListStore = assignmentListStore.map((entry) =>
+      entry.id === assignmentId
+        ? {
+            ...entry,
+            submissions: updated.submissionsSummary,
+            status: updated.status,
+          }
+        : entry,
+    );
+
+    return {
+      ...updated,
+      submissions: updated.submissions.map((submission) => ({ ...submission })),
+    };
   },
 
   async getAttendance(): Promise<AttendanceEntry[]> {
