@@ -33,7 +33,7 @@ export default function DashboardScreen() {
           </ThemedText>
         </View>
       }>
-      <TeacherCard style={[styles.heroCard, { backgroundColor: palette.heroBackground, borderColor: palette.heroBorder }]}>
+      <TeacherCard style={[styles.heroCard, { backgroundColor: palette.heroBackground, borderColor: palette.heroBorder }] as any}>
         <View style={styles.heroRow}>
           <View style={styles.heroCopy}>
             <ThemedText style={[styles.heroLabel, { color: palette.heroAccent }]}>Today at a glance</ThemedText>

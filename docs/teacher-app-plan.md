@@ -137,3 +137,12 @@ The teacher should be able to:
 3. Introduce query and mutation handling for API calls.
 4. Add route groups for authenticated flows.
 5. Build attendance detail and assignment detail screens next.
+
+## Current frontend baseline
+
+The current repo now includes:
+
+- a teacher-focused tab shell
+- shared mock domain data
+- a lightweight async service layer that mirrors future backend integration
+- dedicated attendance and assignments screens

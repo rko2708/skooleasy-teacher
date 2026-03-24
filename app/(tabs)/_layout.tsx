@@ -35,6 +35,28 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="attendance"
+        options={{
+          title: 'Attendance',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              size={22}
+              name={focused ? 'checkbox' : 'checkbox-outline'}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="assignments"
+        options={{
+          title: 'Assignments',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons size={22} name={focused ? 'create' : 'create-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="classes"
         options={{
           title: 'Classes',
@@ -46,10 +68,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons size={22} name={focused ? 'person-circle' : 'person-circle-outline'} color={color} />
-          ),
+          href: null,
         }}
       />
     </Tabs>

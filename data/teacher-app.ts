@@ -16,6 +16,15 @@ export type AssignmentEntry = {
   status: 'draft' | 'review' | 'scheduled';
 };
 
+export type AttendanceEntry = {
+  id: string;
+  classLabel: string;
+  mode: 'Daily' | 'Period';
+  status: 'pending' | 'completed';
+  summary: string;
+  cutoffLabel: string;
+};
+
 export type ClassOverview = {
   id: string;
   classLabel: string;
@@ -99,6 +108,46 @@ export const assignments: AssignmentEntry[] = [
     dueLabel: 'Publishes Friday',
     submissions: 'Attachment added',
     status: 'scheduled',
+  },
+];
+
+export const attendanceEntries: AttendanceEntry[] = [
+  {
+    id: 'at1',
+    classLabel: 'Grade 7-B',
+    mode: 'Daily',
+    status: 'pending',
+    summary: 'Class teacher attendance not submitted yet.',
+    cutoffLabel: 'Submit by 10:15 AM',
+  },
+  {
+    id: 'at2',
+    classLabel: 'Grade 8-A',
+    mode: 'Period',
+    status: 'pending',
+    summary: 'Second period roster open for Mathematics.',
+    cutoffLabel: 'Submit by 09:30 AM',
+  },
+  {
+    id: 'at3',
+    classLabel: 'Grade 6-C',
+    mode: 'Period',
+    status: 'completed',
+    summary: 'Marked during substitution with 27 present.',
+    cutoffLabel: 'Saved at 11:14 AM',
+  },
+];
+
+export const attendanceInsights = [
+  {
+    id: 'ai1',
+    title: 'Below-threshold attendance',
+    detail: '3 students in Grade 7-B have dropped below 75% this month.',
+  },
+  {
+    id: 'ai2',
+    title: 'Leave approvals waiting',
+    detail: '2 parent leave notes are awaiting class teacher review before noon.',
   },
 ];
 

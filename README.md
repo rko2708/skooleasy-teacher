@@ -8,10 +8,11 @@ The app now starts with a teacher-oriented shell instead of the Expo starter scr
 
 - `Dashboard`: daily snapshot, next classes, assignments queue, support follow-ups
 - `Schedule`: weekly timetable framing with substitution and attendance hooks
+- `Attendance`: daily and period attendance desk for teachers and class teachers
+- `Assignments`: homework and review queue
 - `Classes`: class teacher and subject teacher workspace
-- `Profile`: role scope and API domain summary
 
-All data is currently mocked in [`data/teacher-app.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/data/teacher-app.ts) so we can shape the frontend before wiring real endpoints.
+Data is currently mocked in [`data/teacher-app.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/data/teacher-app.ts), and the async service shape lives in [`services/teacher-service.ts`](/Users/rko27/Desktop/skooleasy/skooleasy-teacher/services/teacher-service.ts) so we can swap in real APIs cleanly.
 
 ## Product direction
 
